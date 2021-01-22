@@ -2,16 +2,28 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <style>*{font-family: Arial, Helvetica, sans-serif}</style>
+    <style>
+    *{font-family: Arial, Helvetica, sans-serif; min-height: 20px; padding: auto;}
+    section {margin-bottom: 8px;}
+    button {background-color: rgb(144, 197, 243);
+    border: none;
+    cursor: pointer;}
+    button:hover {background-color: rgb(117, 178, 231);}
+    button:active {background-color: rgb(113, 139, 255);}
+    </style>
   </head>
 
 <body>
+  <section>
     <div>Set Timer</div>
     <input id="endTime" type="time" value="16:00">
     <button id="start">Start</button>
+  </section>
+  <section>
     <div>Time until close:</div>
     <div id="timeUntilClose">---</div>
     <button id="clear">Clear Timer</button>
+  </section>
 </body>
 <script src="default.js"></script>
 </html>
