@@ -1,0 +1,1 @@
+Closes tabs with a timer. Right now may be buggy and could destroy your computer. You have been warned.

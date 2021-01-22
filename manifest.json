@@ -1,0 +1,21 @@
+{
+
+  "description": "Closes tabs on a timer",
+  "manifest_version": 2,
+  "name": "CloseTabTimer",
+  "version": "1.0",
+  "homepage_url": "https://github.com/AluminumChassis/CloseTabTimer",
+  "icons": {
+    "48": "icons/closetabs.png"
+  },
+  "background": {
+    "scripts": ["CloseTabTimer.js"]
+  },
+  "browser_action": {
+    "default_icon": {
+        "48": "icons/closetabs.png"
+    },
+    "default_title": "CloseTabTimer",
+    "default_popup": "popup/default.html"
+  }
+}
