@@ -3,7 +3,6 @@ setInterval(function() {
     console.log(timers)
     removeArray = []
     for(let t in timers) {
-        browser.runtime.sendMessage({"operation": "update", "tabID": timers[t].tabID})
         if (timers[t].endTime.getTime() - (new Date()).getTime() < 0) {
             browser.tabs.remove(timers[t].tabID)
             removeArray.unshift(t)
@@ -24,6 +23,15 @@ class timer {
 }
 
 function receiveMessage(request) {
+    if(request.operation == "update") {
+        for(let t in timers) {
+            if (timers[t].tabID == request.tabID) {
+                browser.runtime.sendMessage({"operation": "update", "tabID": timers[t].tabID, "endTime": timers[t].endTime}).catch((err)=>{console.log("No active popup")})
+                return
+            }
+        }
+    }
+
     for(let t in timers) {
         if (timers[t].tabID == request.tabID) {
             timers.splice(t,1)
@@ -34,6 +42,9 @@ function receiveMessage(request) {
     } else if (request.operation == "create"){
         addTimer(request.endTime, request.tabID)
     }
+}
+function onerror(e) {
+    console.log(e)
 }
 
 browser.runtime.onMessage.addListener(receiveMessage);

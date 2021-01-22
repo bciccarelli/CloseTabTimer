@@ -1,7 +1,6 @@
 let thisInterval
-let endTime
 function start(){
-    endTime = new Date();
+    let endTime = new Date();
     duration = document.getElementById("endTime").valueAsNumber
     let hours, minutes, seconds
     [hours, minutes, seconds] = milliToHourMinute(duration)
@@ -20,7 +19,7 @@ function start(){
         updateTimer("Invalid Time")
         return
     }
-    startCountdown()
+    startCountdown(endTime)
 }
 
 function clear(){
@@ -32,19 +31,24 @@ function clear(){
     clearInterval(thisInterval)
     updateTimer("---")
 }
-function startCountdown() {
+function startCountdown(endTime) {
     clearInterval(thisInterval)
+    timerTick(endTime)
     thisInterval = setInterval(function(){
-        let dateNow = new Date()
-        let hours, minutes, seconds
-        [hours, minutes, seconds] = milliToHourMinute(endTime.getTime() - dateNow.getTime())
-        if(seconds < 0) {
-            clearInterval(thisInterval)
-            updateTimer("---")
-            return
-        }
-        updateTimer(hours + "h, " + minutes + "m, " + seconds + "s")
+        timerTick(endTime)
     }, 1000)
+}
+
+function timerTick(endTime) {
+    let dateNow = new Date()
+    let hours, minutes, seconds
+    [hours, minutes, seconds] = milliToHourMinute(endTime.getTime() - dateNow.getTime())
+    if(seconds < 0) {
+        clearInterval(thisInterval)
+        updateTimer("---")
+        return
+    }
+    updateTimer(hours + "h, " + minutes + "m, " + seconds + "s")
 }
 
 function updateTimer(timerText){
@@ -64,14 +68,23 @@ function onError(error) {
   }  
 
 function receiveMessage(request) {
+    
+    console.log(request.operation)
+    if(request.operation == "update") {
+        var query = { active: true, currentWindow: true };
+        function callback(tabs) {
+            if(tabs[0].id == request.tabID) {
+                let endTime = request.endTime;
+                startCountdown(endTime);
+            }
+        }
+        browser.tabs.query(query, callback)
+    }
+}
+function checkUpdate(){
     var query = { active: true, currentWindow: true };
     function callback(tabs) {
-        console.log(request.operation)
-        console.log(request.tabID)
-        if(request.operation == "update" && tabs[0].id == request.tabID) {
-            endTime = request.endTime;
-            startCountdown();
-        }
+        browser.runtime.sendMessage({"operation": "update", "tabID": tabs[0].id})
     }
     browser.tabs.query(query, callback)
 }
@@ -79,3 +92,4 @@ function receiveMessage(request) {
 browser.runtime.onMessage.addListener(receiveMessage);
 document.getElementById("start").onclick = start
 document.getElementById("clear").onclick = clear
+checkUpdate()
